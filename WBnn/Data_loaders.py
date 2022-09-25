@@ -110,7 +110,7 @@ def get_loaders(
         test_dataset = SegmentationDataset(
             images=np_images.tolist(),
             masks=np_masks.tolist(),
-            transforms=valid_transforms_fn
+            transforms=train_transforms_fn
         )
 
         # Catalyst uses normal torch.data.DataLoader
@@ -148,8 +148,8 @@ class SegmentationDataset(Dataset):
 
         result = {"image": image}
 
-        if self.masks is not None:
-            mask = gif_imread(self.masks[idx])
+        if self.masks is not None and len(self.masks) != 0:
+            mask = utils.imread(self.masks[idx])
             result["mask"] = mask
 
         if self.transforms is not None:

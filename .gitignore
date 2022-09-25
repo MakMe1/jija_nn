@@ -2,3 +2,9 @@
 microdst/
 test_dataset/
 *.JPG
+*.csv
+test/
+Dataset_generator/test_canny.py
+build/
+dist/
+__pycache__/
