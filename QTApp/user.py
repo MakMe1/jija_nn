@@ -4,10 +4,12 @@ import ctypes
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+from pathlib import Path
+from WBnn.test_model import test_model
 
 
 class MainUI(QWidget):
-
+    start_training = pyqtSignal(str)
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -29,6 +31,7 @@ class MainUI(QWidget):
         self.btn_DownloadImages.setStyleSheet(self.btnE_styleSheet)
         self.btn_DownloadImages.resize(100, 40)
         self.btn_DownloadImages.clicked.connect(self.load_images)
+        self.start_training.connect(self.begin_training)
 
         self.btn_FindBears = QPushButton('Запустить поиск', self)
         self.btn_FindBears.setStyleSheet(self.btnD_styleSheet)
@@ -56,16 +59,19 @@ class MainUI(QWidget):
         self.setLayout(self.vbox)
         self.setStyleSheet(layoutStyleSheet)
 
-
     def load_images(self):
         # fileName = QFileDialog.getOpenFileName(self, "Выберите папку с изображениями", "/home/jana", "Image Files (*.png *.jpg *.bmp)")
         dirlist = QFileDialog.getExistingDirectory(None,"Выбрать папку",".")
-        print(dirlist)
+        if dirlist == "": return
 
         self.btn_FindBears.setEnabled(True)
         self.btn_FindBears.setStyleSheet(self.btnE_styleSheet)
-        pass
-        
+        self.start_training.emit(dirlist)
+
+    @pyqtSlot(str)
+    def begin_training(self, dirlist):
+        print(111)
+        test_model(Path(dirlist))
 
     def find_bears(self):
         self.btn_FindBears.setEnabled(False)
@@ -81,14 +87,13 @@ class MainUI(QWidget):
 
         pass
 
-
     def save_results(self):
         dirlist = QFileDialog.getExistingDirectory(None, "Выбрать папку", ".")
         print(dirlist)
         pass
 
 
-if __name__ == '__main__':
+def run_app():
     app = QApplication(sys.argv)
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("wb_0.0.1")
     app.setWindowIcon(QIcon('bear.png'))
